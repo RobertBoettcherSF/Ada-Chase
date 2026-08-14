@@ -41,13 +41,13 @@ package body Chase is
    function Values_Equal (Left, Right : Value) return Boolean is
    begin
       if Left.V_Kind = Literal_Value and Right.V_Kind = Literal_Value then
-         return Trim(Left.Text, Ada.Strings.Fixed.Trim_End'Both) = Trim(Right.Text, Ada.Strings.Fixed.Trim_End'Both);
+         return Trim(Left.Text, Ada.Strings.Fixed.Trim_End'(Both)) = Trim(Right.Text, Ada.Strings.Fixed.Trim_End'(Both));
       elsif Left.V_Kind = Literal_Value and Right.V_Kind = Variable_Value then
-         return Trim(Left.Text, Ada.Strings.Fixed.Trim_End'Both) = Trim(Right.Text, Ada.Strings.Fixed.Trim_End'Both);
+         return Trim(Left.Text, Ada.Strings.Fixed.Trim_End'(Both)) = Trim(Right.Text, Ada.Strings.Fixed.Trim_End'(Both));
       elsif Left.V_Kind = Variable_Value and Right.V_Kind = Literal_Value then
-         return Trim(Left.Text, Ada.Strings.Fixed.Trim_End'Both) = Trim(Right.Text, Ada.Strings.Fixed.Trim_End'Both);
+         return Trim(Left.Text, Ada.Strings.Fixed.Trim_End'(Both)) = Trim(Right.Text, Ada.Strings.Fixed.Trim_End'(Both));
       elsif Left.V_Kind = Variable_Value and Right.V_Kind = Variable_Value then
-         return Trim(Left.Text, Ada.Strings.Fixed.Trim_End'Both) = Trim(Right.Text, Ada.Strings.Fixed.Trim_End'Both) and Left.Subscript = Right.Subscript;
+         return Trim(Left.Text, Ada.Strings.Fixed.Trim_End'(Both)) = Trim(Right.Text, Ada.Strings.Fixed.Trim_End'(Both)) and Left.Subscript = Right.Subscript;
       end if;
       return False;
    end Values_Equal;
