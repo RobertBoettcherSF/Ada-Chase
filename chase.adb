@@ -61,14 +61,11 @@ package body Chase is
    begin
       if Left.V_Kind = Literal_Value and Right.V_Kind = Literal_Value then
          return Trim_Both(Left.Text) = Trim_Both(Right.Text);
-      elsif Left.V_Kind = Literal_Value and Right.V_Kind = Variable_Value then
-         return Trim_Both(Left.Text) = Trim_Both(Right.Text);
-      elsif Left.V_Kind = Variable_Value and Right.V_Kind = Literal_Value then
-         return Trim_Both(Left.Text) = Trim_Both(Right.Text);
       elsif Left.V_Kind = Variable_Value and Right.V_Kind = Variable_Value then
-         return Trim_Both(Left.Text) = Trim_Both(Right.Text) and Left.Subscript = Right.Subscript;
+         return Left.Subscript = Right.Subscript;
+      else
+         return False;
       end if;
-      return False;
    end Values_Equal;
 
    function Find_Attribute_Index (
