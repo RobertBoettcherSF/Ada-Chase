@@ -2,9 +2,28 @@
 --  Implementation of the Chase algorithm and its variants
 
 with Ada.Text_IO; use Ada.Text_IO;
-with Ada.Strings.Fixed; use Ada.Strings.Fixed;
 
 package body Chase is
+
+   -- Helper function to trim spaces from both ends of a string
+   function Trim_Both (S : String) return String is
+      First : Integer := S'First;
+      Last : Integer := S'Last;
+   begin
+      -- Skip leading spaces
+      while First <= Last and then S(First) = ' ' loop
+         First := First + 1;
+      end loop;
+      -- Skip trailing spaces
+      while Last >= First and then S(Last) = ' ' loop
+         Last := Last - 1;
+      end loop;
+      if First > Last then
+         return "";
+      else
+         return S(First..Last);
+      end if;
+   end Trim_Both;
 
    -- ===================================================================
    -- HELPER FUNCTIONS
@@ -41,13 +60,13 @@ package body Chase is
    function Values_Equal (Left, Right : Value) return Boolean is
    begin
       if Left.V_Kind = Literal_Value and Right.V_Kind = Literal_Value then
-         return Ada.Strings.Fixed.Trim(Left.Text, Ada.Strings.Fixed.Trim_End'Val(2)) = Ada.Strings.Fixed.Trim(Right.Text, Ada.Strings.Fixed.Trim_End'Val(2));
+         return Trim_Both(Left.Text) = Trim_Both(Right.Text);
       elsif Left.V_Kind = Literal_Value and Right.V_Kind = Variable_Value then
-         return Ada.Strings.Fixed.Trim(Left.Text, Ada.Strings.Fixed.Trim_End'Val(2)) = Ada.Strings.Fixed.Trim(Right.Text, Ada.Strings.Fixed.Trim_End'Val(2));
+         return Trim_Both(Left.Text) = Trim_Both(Right.Text);
       elsif Left.V_Kind = Variable_Value and Right.V_Kind = Literal_Value then
-         return Ada.Strings.Fixed.Trim(Left.Text, Ada.Strings.Fixed.Trim_End'Val(2)) = Ada.Strings.Fixed.Trim(Right.Text, Ada.Strings.Fixed.Trim_End'Val(2));
+         return Trim_Both(Left.Text) = Trim_Both(Right.Text);
       elsif Left.V_Kind = Variable_Value and Right.V_Kind = Variable_Value then
-         return Ada.Strings.Fixed.Trim(Left.Text, Ada.Strings.Fixed.Trim_End'Val(2)) = Ada.Strings.Fixed.Trim(Right.Text, Ada.Strings.Fixed.Trim_End'Val(2)) and Left.Subscript = Right.Subscript;
+         return Trim_Both(Left.Text) = Trim_Both(Right.Text) and Left.Subscript = Right.Subscript;
       end if;
       return False;
    end Values_Equal;
