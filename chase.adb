@@ -2,7 +2,7 @@
 --  Implementation of the Chase algorithm and its variants
 
 with Ada.Text_IO; use Ada.Text_IO;
-with Ada.Strings.Fixed;
+with Ada.Strings.Fixed; use Ada.Strings.Fixed;
 
 package body Chase is
 
@@ -41,13 +41,13 @@ package body Chase is
    function Values_Equal (Left, Right : Value) return Boolean is
    begin
       if Left.V_Kind = Literal_Value and Right.V_Kind = Literal_Value then
-         return Ada.Strings.Fixed.Trim(Left.Text, Ada.Strings.Fixed.Both) = Ada.Strings.Fixed.Trim(Right.Text, Ada.Strings.Fixed.Both);
+         return Trim(Left.Text, Both) = Trim(Right.Text, Both);
       elsif Left.V_Kind = Literal_Value and Right.V_Kind = Variable_Value then
-         return Ada.Strings.Fixed.Trim(Left.Text, Ada.Strings.Fixed.Both) = Ada.Strings.Fixed.Trim(Right.Text, Ada.Strings.Fixed.Both);
+         return Trim(Left.Text, Both) = Trim(Right.Text, Both);
       elsif Left.V_Kind = Variable_Value and Right.V_Kind = Literal_Value then
-         return Ada.Strings.Fixed.Trim(Left.Text, Ada.Strings.Fixed.Both) = Ada.Strings.Fixed.Trim(Right.Text, Ada.Strings.Fixed.Both);
+         return Trim(Left.Text, Both) = Trim(Right.Text, Both);
       elsif Left.V_Kind = Variable_Value and Right.V_Kind = Variable_Value then
-         return Ada.Strings.Fixed.Trim(Left.Text, Ada.Strings.Fixed.Both) = Ada.Strings.Fixed.Trim(Right.Text, Ada.Strings.Fixed.Both) and Left.Subscript = Right.Subscript;
+         return Trim(Left.Text, Both) = Trim(Right.Text, Both) and Left.Subscript = Right.Subscript;
       end if;
       return False;
    end Values_Equal;
@@ -76,16 +76,16 @@ package body Chase is
    end Attribute_In_Schema;
 
    -- Helper function to convert Character to Attribute
-   function Char_To_Attribute (Ch : Character) return Attribute is
+   function Char_To_Attribute (C : Character) return Attribute is
    begin
-      if Ch = 'A' then return Attribute'Val(1);
-      elsif Ch = 'B' then return Attribute'Val(2);
-      elsif Ch = 'C' then return Attribute'Val(3);
-      elsif Ch = 'D' then return Attribute'Val(4);
-      elsif Ch = 'E' then return Attribute'Val(5);
-      elsif Ch = 'F' then return Attribute'Val(6);
-      elsif Ch = 'G' then return Attribute'Val(7);
-      elsif Ch = 'H' then return Attribute'Val(8);
+      if C = 'A' then return Attribute'Val(1);
+      elsif C = 'B' then return Attribute'Val(2);
+      elsif C = 'C' then return Attribute'Val(3);
+      elsif C = 'D' then return Attribute'Val(4);
+      elsif C = 'E' then return Attribute'Val(5);
+      elsif C = 'F' then return Attribute'Val(6);
+      elsif C = 'G' then return Attribute'Val(7);
+      elsif C = 'H' then return Attribute'Val(8);
       else return Nul;
       end if;
    end Char_To_Attribute;
