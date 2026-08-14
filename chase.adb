@@ -90,7 +90,7 @@ package body Chase is
       Result_Length := Decomp_Length;
       for Schema_Idx in 1..Decomp_Length loop
          for Attr_Idx in 1..Tuple_Length loop
-            if Attribute_In_Schema(Decomp(Schema_Idx), Max_Attributes, Attribute'(Original_Tuple(Attr_Idx).Text)) then
+            if Attribute_In_Schema(Decomp(Schema_Idx), Max_Attributes, Attribute'Val(Character'Pos(Original_Tuple(Attr_Idx).Text(1)))) then
                Result(Schema_Idx)(Attr_Idx) := Original_Tuple(Attr_Idx);
             else
                Result(Schema_Idx)(Attr_Idx) := Create_Variable(Original_Tuple(Attr_Idx).Text, Schema_Idx);
@@ -107,17 +107,14 @@ package body Chase is
       Changed : out Boolean) is
 
       function Get_Position (Attr : Attribute) return Integer is
-         A_Attr : constant Attribute := (1 => 'A', others => ' ');
-         B_Attr : constant Attribute := (1 => 'B', others => ' ');
-         C_Attr : constant Attribute := (1 => 'C', others => ' ');
-         D_Attr : constant Attribute := (1 => 'D', others => ' ');
       begin
-         if Attr = A_Attr then return 1;
-         elsif Attr = B_Attr then return 2;
-         elsif Attr = C_Attr then return 3;
-         elsif Attr = D_Attr then return 4;
-         else return -1;
-         end if;
+         case Attr is
+            when A => return 1;
+            when B => return 2;
+            when C => return 3;
+            when D => return 4;
+            when others => return -1;
+         end case;
       end Get_Position;
 
       Right_Pos : Integer;
