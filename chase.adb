@@ -107,11 +107,15 @@ package body Chase is
       Changed : out Boolean) is
 
       function Get_Position (Attr : Attribute) return Integer is
+         A_Attr : constant Attribute := (1 => 'A', others => ' ');
+         B_Attr : constant Attribute := (1 => 'B', others => ' ');
+         C_Attr : constant Attribute := (1 => 'C', others => ' ');
+         D_Attr : constant Attribute := (1 => 'D', others => ' ');
       begin
-         if Attr = Attribute'("A         ") then return 1;
-         elsif Attr = Attribute'("B         ") then return 2;
-         elsif Attr = Attribute'("C         ") then return 3;
-         elsif Attr = Attribute'("D         ") then return 4;
+         if Attr = A_Attr then return 1;
+         elsif Attr = B_Attr then return 2;
+         elsif Attr = C_Attr then return 3;
+         elsif Attr = D_Attr then return 4;
          else return -1;
          end if;
       end Get_Position;
