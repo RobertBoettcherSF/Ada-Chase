@@ -39,16 +39,15 @@ package body Chase is
    end Create_Variable;
 
    function Values_Equal (Left, Right : Value) return Boolean is
-      use Ada.Strings.Fixed;
    begin
       if Left.V_Kind = Literal_Value and Right.V_Kind = Literal_Value then
-         return Trim(Left.Text, Trim_End'Val(2)) = Trim(Right.Text, Trim_End'Val(2));
+         return Ada.Strings.Fixed.Trim(Left.Text, Ada.Strings.Fixed.Trim_End'Val(2)) = Ada.Strings.Fixed.Trim(Right.Text, Ada.Strings.Fixed.Trim_End'Val(2));
       elsif Left.V_Kind = Literal_Value and Right.V_Kind = Variable_Value then
-         return Trim(Left.Text, Trim_End'Val(2)) = Trim(Right.Text, Trim_End'Val(2));
+         return Ada.Strings.Fixed.Trim(Left.Text, Ada.Strings.Fixed.Trim_End'Val(2)) = Ada.Strings.Fixed.Trim(Right.Text, Ada.Strings.Fixed.Trim_End'Val(2));
       elsif Left.V_Kind = Variable_Value and Right.V_Kind = Literal_Value then
-         return Trim(Left.Text, Trim_End'Val(2)) = Trim(Right.Text, Trim_End'Val(2));
+         return Ada.Strings.Fixed.Trim(Left.Text, Ada.Strings.Fixed.Trim_End'Val(2)) = Ada.Strings.Fixed.Trim(Right.Text, Ada.Strings.Fixed.Trim_End'Val(2));
       elsif Left.V_Kind = Variable_Value and Right.V_Kind = Variable_Value then
-         return Trim(Left.Text, Trim_End'Val(2)) = Trim(Right.Text, Trim_End'Val(2)) and Left.Subscript = Right.Subscript;
+         return Ada.Strings.Fixed.Trim(Left.Text, Ada.Strings.Fixed.Trim_End'Val(2)) = Ada.Strings.Fixed.Trim(Right.Text, Ada.Strings.Fixed.Trim_End'Val(2)) and Left.Subscript = Right.Subscript;
       end if;
       return False;
    end Values_Equal;
