@@ -129,6 +129,8 @@ package Chase is
    -- HELPER FUNCTIONS
    -- ===================================================================
 
+   function Char_To_Attribute (C : Character) return Attribute;
+
    function Create_Literal (Text : String) return Value;
    function Create_Variable (Text : String; Subscript : Integer) return Value;
 
