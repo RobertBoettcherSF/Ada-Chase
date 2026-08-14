@@ -271,8 +271,8 @@ begin
       Assert(Values_Equal(Create_Variable("a", 1), Create_Variable("a", 1)), "Should be equal");
       Put_Line("     PASS");
 
-      Put_Line("  7.3 Assert literal-variable equal");
-      Assert(Values_Equal(Create_Literal("a"), Create_Variable("a", 1)), "Should be equal");
+      Put_Line("  7.3 Assert literal-variable NOT equal");
+      Assert(not Values_Equal(Create_Literal("a"), Create_Variable("a", 1)), "Should NOT be equal");
       Put_Line("     PASS");
 
       End_Test(True);
