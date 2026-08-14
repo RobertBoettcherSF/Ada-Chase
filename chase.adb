@@ -182,13 +182,10 @@ package body Chase is
                         Left_Match := False;
                         exit;
                      end if;
-                     if T(Row1)(Pos).V_Kind = Literal_Value or T(Row2)(Pos).V_Kind = Literal_Value then
-                        Has_Literal := True;
-                     end if;
                   end;
                end loop;
 
-               if Left_Match and Has_Literal and not Values_Equal(T(Row1)(Right_Pos), T(Row2)(Right_Pos)) then
+               if Left_Match and not Values_Equal(T(Row1)(Right_Pos), T(Row2)(Right_Pos)) then
                   if T(Row1)(Right_Pos).V_Kind = Literal_Value then
                      T(Row2)(Right_Pos) := T(Row1)(Right_Pos);
                      Changed := True;
