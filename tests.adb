@@ -8,16 +8,6 @@ with Chase; use Chase;
 
 procedure Tests is
 
-   -- Helper to convert single-character string to Attribute
-   function To_Attribute (S : String) return Attribute is
-      Result : Attribute := (others => ' ');
-   begin
-      if S'Length > 0 and S'Length <= 10 then
-         Result(1..S'Length) := S;
-      end if;
-      return Result;
-   end To_Attribute;
-
    -- Helper to create a tuple with 4 attributes
    function Create_Tuple_4 (A, B, C, D : String) return Tuple is
       T : Tuple := (others => Create_Literal(""));
@@ -30,27 +20,29 @@ procedure Tests is
    end Create_Tuple_4;
 
    -- Helper to create an FD with one left attribute
-   function Create_FD_1 (Left_Attr, Right_Attr : String) return Functional_Dependency is
+   function Create_FD_1 (Left_Attr, Right_Attr : Character) return Functional_Dependency is
    begin
-      return (Left => (1 => To_Attribute(Left_Attr), others => (others => ' ')),
+      return (Left => (1 => Attribute'Val(Character'Pos(Left_Attr)), others => Nul),
               Left_Length => 1,
-              Right => To_Attribute(Right_Attr));
+              Right => Attribute'Val(Character'Pos(Right_Attr)));
    end Create_FD_1;
 
    -- Helper to create an FD with two left attributes
-   function Create_FD_2 (Left_Attr1, Left_Attr2, Right_Attr : String) return Functional_Dependency is
+   function Create_FD_2 (Left_Attr1, Left_Attr2, Right_Attr : Character) return Functional_Dependency is
    begin
-      return (Left => (1 => To_Attribute(Left_Attr1), 2 => To_Attribute(Left_Attr2), others => (others => ' ')),
+      return (Left => (1 => Attribute'Val(Character'Pos(Left_Attr1)),
+                       2 => Attribute'Val(Character'Pos(Left_Attr2)),
+                       others => Nul),
               Left_Length => 2,
-              Right => To_Attribute(Right_Attr));
+              Right => Attribute'Val(Character'Pos(Right_Attr)));
    end Create_FD_2;
 
-   -- Helper to create a decomposition schema
+   -- Helper to create a decomposition schema from string of attribute chars
    function Create_Schema (Attrs : String) return Attribute_List is
-      Schema : Attribute_List := (others => (others => ' '));
+      Schema : Attribute_List := (others => Nul);
    begin
       for I in 1..Attrs'Length loop
-         Schema(I) := To_Attribute(Attrs(I..I));
+         Schema(I) := Attribute'Val(Character'Pos(Attrs(I)));
       end loop;
       return Schema;
    end Create_Schema;
@@ -88,9 +80,9 @@ begin
    -- Initialize Wikipedia example data
    Wikipedia_Original := Create_Tuple_4("a", "b", "c", "d");
 
-   Wikipedia_FDs(1) := Create_FD_1("A", "B");  -- A->B
-   Wikipedia_FDs(2) := Create_FD_1("B", "C");  -- B->C
-   Wikipedia_FDs(3) := Create_FD_2("C", "D", "A");  -- CD->A
+   Wikipedia_FDs(1) := Create_FD_1('A', 'B');  -- A->B
+   Wikipedia_FDs(2) := Create_FD_1('B', 'C');  -- B->C
+   Wikipedia_FDs(3) := Create_FD_2('C', 'D', 'A');  -- CD->A
 
    -- Decomposition: S1={A,D}, S2={A,C}, S3={B,C,D}
    Wikipedia_Decomp(1) := Create_Schema("AD");
@@ -132,7 +124,7 @@ begin
    -- ===================================================================
    Start_Test("Standard Chase - Lossy Decomposition");
    declare
-      Lossy_Decomp : Decomposition := (Create_Schema("AB"), Create_Schema("CD"), others => (others => (others => ' ')));
+      Lossy_Decomp : Decomposition := (Create_Schema("AB"), Create_Schema("CD"), others => (others => Nul));
       Result : Boolean;
    begin
       Put_Line("  2.1 Assert returns False");
@@ -237,9 +229,9 @@ begin
    -- ===================================================================
    Start_Test("Empty Input Handling");
    declare
-      Empty_FDs : FD_List := (others => (Left => (others => (others => ' ')), Left_Length => 0, Right => (others => ' ')));
+      Empty_FDs : FD_List := (others => (Left => (others => Nul), Left_Length => 0, Right => Nul));
       Single_Tuple : Tuple := (others => Create_Literal(""));
-      Single_Decomp : Decomposition := (Create_Schema("A"), others => (others => (others => ' ')));
+      Single_Decomp : Decomposition := (Create_Schema("A"), others => (others => Nul));
       Result : Boolean;
    begin
       Put_Line("  6.1 Assert handles empty FDs");
@@ -327,22 +319,22 @@ begin
    begin
       Put_Line("  9.1 Assert A->B works");
       Create_Initial_Tableau(Wikipedia_Original, Wikipedia_Decomp, 3, Tuple_Length, T, T_Length);
-      Apply_FD(T, T_Length, Create_FD_1("A", "B"), Tuple_Length, Changed);
+      Apply_FD(T, T_Length, Create_FD_1('A', 'B'), Tuple_Length, Changed);
       Assert(Changed and Values_Equal(T(1)(2), T(2)(2)), "Should equalize B values");
       Put_Line("     PASS");
 
       Put_Line("  9.2 Assert B->C works");
       Create_Initial_Tableau(Wikipedia_Original, Wikipedia_Decomp, 3, Tuple_Length, T, T_Length);
-      Apply_FD(T, T_Length, Create_FD_1("A", "B"), Tuple_Length, Changed);
-      Apply_FD(T, T_Length, Create_FD_1("B", "C"), Tuple_Length, Changed);
+      Apply_FD(T, T_Length, Create_FD_1('A', 'B'), Tuple_Length, Changed);
+      Apply_FD(T, T_Length, Create_FD_1('B', 'C'), Tuple_Length, Changed);
       Assert(T(1)(3).V_Kind = Literal_Value, "C should become literal");
       Put_Line("     PASS");
 
       Put_Line("  9.3 Assert CD->A works");
       Create_Initial_Tableau(Wikipedia_Original, Wikipedia_Decomp, 3, Tuple_Length, T, T_Length);
-      Apply_FD(T, T_Length, Create_FD_1("A", "B"), Tuple_Length, Changed);
-      Apply_FD(T, T_Length, Create_FD_1("B", "C"), Tuple_Length, Changed);
-      Apply_FD(T, T_Length, Create_FD_2("C", "D", "A"), Tuple_Length, Changed);
+      Apply_FD(T, T_Length, Create_FD_1('A', 'B'), Tuple_Length, Changed);
+      Apply_FD(T, T_Length, Create_FD_1('B', 'C'), Tuple_Length, Changed);
+      Apply_FD(T, T_Length, Create_FD_2('C', 'D', 'A'), Tuple_Length, Changed);
       Assert(T(3)(1).V_Kind = Literal_Value, "A should become literal");
       Put_Line("     PASS");
 
@@ -393,9 +385,9 @@ begin
    -- ===================================================================
    Start_Test("Validation Functions");
    declare
-      Invalid_FD : Functional_Dependency := (Left => (others => (others => ' ')), Left_Length => 0, Right => (others => ' '));
+      Invalid_FD : Functional_Dependency := (Left => (others => Nul), Left_Length => 0, Right => Nul);
       Invalid_FDs : FD_List := (1 => Invalid_FD, others => Wikipedia_FDs(1));
-      All_Attrs : Attribute_List := (1 => To_Attribute("A"), others => (others => ' '));
+      All_Attrs : Attribute_List := (1 => A, others => Nul);
    begin
       Put_Line("  11.1 Assert validates correct FDs");
       Assert(Validate_FDs(Wikipedia_FDs, 3), "Should validate correct FDs");
@@ -420,8 +412,8 @@ begin
    -- ===================================================================
    Start_Test("Edge Cases");
    declare
-      Single_Schema_Decomp : Decomposition := (Create_Schema("ABCD"), others => (others => (others => ' ')));
-      Identity_FD : Functional_Dependency := Create_FD_1("A", "A");
+      Single_Schema_Decomp : Decomposition := (Create_Schema("ABCD"), others => (others => Nul));
+      Identity_FD : Functional_Dependency := Create_FD_1('A', 'A');
       FDs_With_Identity : FD_List := (Wikipedia_FDs(1), Wikipedia_FDs(2), Wikipedia_FDs(3), Identity_FD, others => Wikipedia_FDs(1));
       Redundant_FDs : FD_List := (Wikipedia_FDs(1), Wikipedia_FDs(2), Wikipedia_FDs(3), Wikipedia_FDs(1), others => Wikipedia_FDs(1));
       Result : Boolean;
@@ -452,7 +444,7 @@ begin
    -- ===================================================================
    Start_Test("All Variants Comparison");
    declare
-      Lossy_Decomp : Decomposition := (Create_Schema("AB"), Create_Schema("CD"), others => (others => (others => ' ')));
+      Lossy_Decomp : Decomposition := (Create_Schema("AB"), Create_Schema("CD"), others => (others => Nul));
       S, O, C, TG : Boolean;
    begin
       Put_Line("  13.1 Assert all variants agree");
@@ -486,10 +478,10 @@ begin
    Start_Test("Performance and Termination");
    declare
       Large_Tuple : Tuple := (others => Create_Literal(""));
-      Large_FDs : FD_List := (Create_FD_1("A", "B"), Create_FD_1("B", "C"), Create_FD_1("C", "D"), others => Create_FD_1("A", "B"));
-      Large_Decomp : Decomposition := (Create_Schema("AB"), Create_Schema("CD"), Create_Schema("EF"), Create_Schema("GH"), others => (others => (others => ' ')));
-      Cyclic_FDs : FD_List := (Create_FD_1("A", "B"), Create_FD_1("B", "A"), others => Create_FD_1("A", "B"));
-      Many_FDs : FD_List := (Wikipedia_FDs(1), Wikipedia_FDs(2), Wikipedia_FDs(3), Create_FD_1("A", "C"), Create_FD_1("D", "B"), Create_FD_2("A", "B", "D"), others => Wikipedia_FDs(1));
+      Large_FDs : FD_List := (Create_FD_1('A', 'B'), Create_FD_1('B', 'C'), Create_FD_1('C', 'D'), others => Create_FD_1('A', 'B'));
+      Large_Decomp : Decomposition := (Create_Schema("AB"), Create_Schema("CD"), Create_Schema("EF"), Create_Schema("GH"), others => (others => Nul));
+      Cyclic_FDs : FD_List := (Create_FD_1('A', 'B'), Create_FD_1('B', 'A'), others => Create_FD_1('A', 'B'));
+      Many_FDs : FD_List := (Wikipedia_FDs(1), Wikipedia_FDs(2), Wikipedia_FDs(3), Create_FD_1('A', 'C'), Create_FD_1('D', 'B'), Create_FD_2('A', 'B', 'D'), others => Wikipedia_FDs(1));
       Result : Boolean;
    begin
       Put_Line("  14.1 Assert handles larger tuples");
