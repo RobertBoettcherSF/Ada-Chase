@@ -15,14 +15,10 @@ project Chase is
    for Main use ("tests.adb");
 
    -- Compiler options
-   for Compiler_Options ("ada") use ("-g", "-gnata", "-gnatwa");
+   for Compiler_Options ("ada") use ("-g", "-gnata");
 
-   -- Linker options
-   for Linker_Options ("ada") use ("-g");
-
-   -- Package specification
    package Compiler is
-      for Default_Switches ("ada") use ("-g", "-gnata", "-gnatwa");
+      for Default_Switches ("ada") use ("-g", "-gnata");
    end Compiler;
 
 end Chase;
