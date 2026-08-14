@@ -41,13 +41,13 @@ package body Chase is
    function Values_Equal (Left, Right : Value) return Boolean is
    begin
       if Left.V_Kind = Literal_Value and Right.V_Kind = Literal_Value then
-         return Trim(Left.Text, Both) = Trim(Right.Text, Both);
+         return Trim(Left.Text, Trim_End'Both) = Trim(Right.Text, Trim_End'Both);
       elsif Left.V_Kind = Literal_Value and Right.V_Kind = Variable_Value then
-         return Trim(Left.Text, Both) = Trim(Right.Text, Both);
+         return Trim(Left.Text, Trim_End'Both) = Trim(Right.Text, Trim_End'Both);
       elsif Left.V_Kind = Variable_Value and Right.V_Kind = Literal_Value then
-         return Trim(Left.Text, Both) = Trim(Right.Text, Both);
+         return Trim(Left.Text, Trim_End'Both) = Trim(Right.Text, Trim_End'Both);
       elsif Left.V_Kind = Variable_Value and Right.V_Kind = Variable_Value then
-         return Trim(Left.Text, Both) = Trim(Right.Text, Both) and Left.Subscript = Right.Subscript;
+         return Trim(Left.Text, Trim_End'Both) = Trim(Right.Text, Trim_End'Both) and Left.Subscript = Right.Subscript;
       end if;
       return False;
    end Values_Equal;
