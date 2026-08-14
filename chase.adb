@@ -76,19 +76,18 @@ package body Chase is
    end Attribute_In_Schema;
 
    -- Helper function to convert Character to Attribute
-   function Char_To_Attribute (C : Character) return Attribute is
+   function Char_To_Attribute (Ch : Character) return Attribute is
    begin
-      case C is
-         when 'A' => return Attribute'A;
-         when 'B' => return Attribute'B;
-         when 'C' => return Attribute'C;
-         when 'D' => return Attribute'D;
-         when 'E' => return Attribute'E;
-         when 'F' => return Attribute'F;
-         when 'G' => return Attribute'G;
-         when 'H' => return Attribute'H;
-         when others => return Nul;
-      end case;
+      if Ch = 'A' then return Attribute'Val(1);
+      elsif Ch = 'B' then return Attribute'Val(2);
+      elsif Ch = 'C' then return Attribute'Val(3);
+      elsif Ch = 'D' then return Attribute'Val(4);
+      elsif Ch = 'E' then return Attribute'Val(5);
+      elsif Ch = 'F' then return Attribute'Val(6);
+      elsif Ch = 'G' then return Attribute'Val(7);
+      elsif Ch = 'H' then return Attribute'Val(8);
+      else return Nul;
+      end if;
    end Char_To_Attribute;
 
    -- ===================================================================
