@@ -108,10 +108,10 @@ package body Chase is
 
       function Get_Position (Attr : Attribute) return Integer is
       begin
-         if Attr = Attribute("A") then return 1;
-         elsif Attr = Attribute("B") then return 2;
-         elsif Attr = Attribute("C") then return 3;
-         elsif Attr = Attribute("D") then return 4;
+         if Attr = Attribute'("A         ") then return 1;
+         elsif Attr = Attribute'("B         ") then return 2;
+         elsif Attr = Attribute'("C         ") then return 3;
+         elsif Attr = Attribute'("D         ") then return 4;
          else return -1;
          end if;
       end Get_Position;
