@@ -2,6 +2,7 @@
 --  Implementation of the Chase algorithm and its variants
 
 with Ada.Text_IO; use Ada.Text_IO;
+with Ada.Strings; use Ada.Strings;
 with Ada.Strings.Fixed; use Ada.Strings.Fixed;
 
 package body Chase is
@@ -41,13 +42,13 @@ package body Chase is
    function Values_Equal (Left, Right : Value) return Boolean is
    begin
       if Left.V_Kind = Literal_Value and Right.V_Kind = Literal_Value then
-         return Trim(Left.Text, Both) = Trim(Right.Text, Both);
+         return Trim(Left.Text, Ada.Strings.Fixed.Both) = Trim(Right.Text, Ada.Strings.Fixed.Both);
       elsif Left.V_Kind = Literal_Value and Right.V_Kind = Variable_Value then
-         return Trim(Left.Text, Both) = Trim(Right.Text, Both);
+         return Trim(Left.Text, Ada.Strings.Fixed.Both) = Trim(Right.Text, Ada.Strings.Fixed.Both);
       elsif Left.V_Kind = Variable_Value and Right.V_Kind = Literal_Value then
-         return Trim(Left.Text, Both) = Trim(Right.Text, Both);
+         return Trim(Left.Text, Ada.Strings.Fixed.Both) = Trim(Right.Text, Ada.Strings.Fixed.Both);
       elsif Left.V_Kind = Variable_Value and Right.V_Kind = Variable_Value then
-         return Trim(Left.Text, Both) = Trim(Right.Text, Both) and Left.Subscript = Right.Subscript;
+         return Trim(Left.Text, Ada.Strings.Fixed.Both) = Trim(Right.Text, Ada.Strings.Fixed.Both) and Left.Subscript = Right.Subscript;
       end if;
       return False;
    end Values_Equal;
@@ -75,6 +76,22 @@ package body Chase is
       return Find_Attribute_Index(Attributes, Attr_Length, Attr) /= -1;
    end Attribute_In_Schema;
 
+   -- Helper function to convert Character to Attribute
+   function Char_To_Attribute (C : Character) return Attribute is
+   begin
+      case C is
+         when 'A' => return A;
+         when 'B' => return B;
+         when 'C' => return C;
+         when 'D' => return D;
+         when 'E' => return E;
+         when 'F' => return F;
+         when 'G' => return G;
+         when 'H' => return H;
+         when others => return Nul;
+      end case;
+   end Char_To_Attribute;
+
    -- ===================================================================
    -- TABLEAU OPERATIONS
    -- ===================================================================
@@ -90,7 +107,7 @@ package body Chase is
       Result_Length := Decomp_Length;
       for Schema_Idx in 1..Decomp_Length loop
          for Attr_Idx in 1..Tuple_Length loop
-            if Attribute_In_Schema(Decomp(Schema_Idx), Max_Attributes, Attribute'Val(Character'Pos(Original_Tuple(Attr_Idx).Text(1)))) then
+            if Attribute_In_Schema(Decomp(Schema_Idx), Max_Attributes, Char_To_Attribute(Original_Tuple(Attr_Idx).Text(1))) then
                Result(Schema_Idx)(Attr_Idx) := Original_Tuple(Attr_Idx);
             else
                Result(Schema_Idx)(Attr_Idx) := Create_Variable(Original_Tuple(Attr_Idx).Text, Schema_Idx);
@@ -113,6 +130,10 @@ package body Chase is
             when B => return 2;
             when C => return 3;
             when D => return 4;
+            when E => return 5;
+            when F => return 6;
+            when G => return 7;
+            when H => return 8;
             when others => return -1;
          end case;
       end Get_Position;
@@ -208,24 +229,24 @@ package body Chase is
       Tuple_Length : Integer)
    return Boolean is
 
-      Tableau : Tableau;
-      Tableau_Length : Integer;
+      T : Tableau := (others => (others => Create_Literal("")));
+      T_Length : Integer;
       Changed : Boolean;
    begin
-      Create_Initial_Tableau(Original_Tuple, Decomp, Decomp_Length, Tuple_Length, Tableau, Tableau_Length);
+      Create_Initial_Tableau(Original_Tuple, Decomp, Decomp_Length, Tuple_Length, T, T_Length);
 
       for Iteration in 1..100 loop
          Changed := False;
          for I in 1..FDs_Length loop
-            Apply_FD(Tableau, Tableau_Length, FDs(I), Tuple_Length, Changed);
+            Apply_FD(T, T_Length, FDs(I), Tuple_Length, Changed);
          end loop;
          exit when not Changed;
-         if Contains_Original_Tuple(Tableau, Tableau_Length, Original_Tuple, Tuple_Length) then
+         if Contains_Original_Tuple(T, T_Length, Original_Tuple, Tuple_Length) then
             return True;
          end if;
       end loop;
 
-      return Contains_Original_Tuple(Tableau, Tableau_Length, Original_Tuple, Tuple_Length);
+      return Contains_Original_Tuple(T, T_Length, Original_Tuple, Tuple_Length);
    end Standard_Chase;
 
    function Oblivious_Chase (
@@ -237,26 +258,26 @@ package body Chase is
       Tuple_Length : Integer)
    return Boolean is
 
-      Tableau : Tableau;
-      Tableau_Length : Integer;
+      T : Tableau := (others => (others => Create_Literal("")));
+      T_Length : Integer;
       Changed : Boolean;
    begin
-      Create_Initial_Tableau(Original_Tuple, Decomp, Decomp_Length, Tuple_Length, Tableau, Tableau_Length);
+      Create_Initial_Tableau(Original_Tuple, Decomp, Decomp_Length, Tuple_Length, T, T_Length);
 
       for Iteration in 1..100 loop
          Changed := False;
          for I in 1..FDs_Length loop
             for J in 1..2 loop
-               Apply_FD(Tableau, Tableau_Length, FDs(I), Tuple_Length, Changed);
+               Apply_FD(T, T_Length, FDs(I), Tuple_Length, Changed);
             end loop;
          end loop;
          exit when not Changed;
-         if Contains_Original_Tuple(Tableau, Tableau_Length, Original_Tuple, Tuple_Length) then
+         if Contains_Original_Tuple(T, T_Length, Original_Tuple, Tuple_Length) then
             return True;
          end if;
       end loop;
 
-      return Contains_Original_Tuple(Tableau, Tableau_Length, Original_Tuple, Tuple_Length);
+      return Contains_Original_Tuple(T, T_Length, Original_Tuple, Tuple_Length);
    end Oblivious_Chase;
 
    function Core_Chase (
@@ -268,24 +289,24 @@ package body Chase is
       Tuple_Length : Integer)
    return Boolean is
 
-      Tableau : Tableau;
-      Tableau_Length : Integer;
+      T : Tableau := (others => (others => Create_Literal("")));
+      T_Length : Integer;
       Changed : Boolean;
    begin
-      Create_Initial_Tableau(Original_Tuple, Decomp, Decomp_Length, Tuple_Length, Tableau, Tableau_Length);
+      Create_Initial_Tableau(Original_Tuple, Decomp, Decomp_Length, Tuple_Length, T, T_Length);
 
       for Iteration in 1..100 loop
          Changed := False;
          for I in 1..FDs_Length loop
-            Apply_FD(Tableau, Tableau_Length, FDs(I), Tuple_Length, Changed);
+            Apply_FD(T, T_Length, FDs(I), Tuple_Length, Changed);
          end loop;
          exit when not Changed;
-         if Contains_Original_Tuple(Tableau, Tableau_Length, Original_Tuple, Tuple_Length) then
+         if Contains_Original_Tuple(T, T_Length, Original_Tuple, Tuple_Length) then
             return True;
          end if;
       end loop;
 
-      return Contains_Original_Tuple(Tableau, Tableau_Length, Original_Tuple, Tuple_Length);
+      return Contains_Original_Tuple(T, T_Length, Original_Tuple, Tuple_Length);
    end Core_Chase;
 
    function Restricted_Chase_TGD (
@@ -297,24 +318,24 @@ package body Chase is
       Tuple_Length : Integer)
    return Boolean is
 
-      Tableau : Tableau;
-      Tableau_Length : Integer;
+      T : Tableau := (others => (others => Create_Literal("")));
+      T_Length : Integer;
       Changed : Boolean;
    begin
-      Create_Initial_Tableau(Original_Tuple, Decomp, Decomp_Length, Tuple_Length, Tableau, Tableau_Length);
+      Create_Initial_Tableau(Original_Tuple, Decomp, Decomp_Length, Tuple_Length, T, T_Length);
 
       for Iteration in 1..100 loop
          Changed := False;
          for I in 1..TGDs_Length loop
-            Apply_FD(Tableau, Tableau_Length, TGDs(I), Tuple_Length, Changed);
+            Apply_FD(T, T_Length, TGDs(I), Tuple_Length, Changed);
          end loop;
          exit when not Changed;
-         if Contains_Original_Tuple(Tableau, Tableau_Length, Original_Tuple, Tuple_Length) then
+         if Contains_Original_Tuple(T, T_Length, Original_Tuple, Tuple_Length) then
             return True;
          end if;
       end loop;
 
-      return Contains_Original_Tuple(Tableau, Tableau_Length, Original_Tuple, Tuple_Length);
+      return Contains_Original_Tuple(T, T_Length, Original_Tuple, Tuple_Length);
    end Restricted_Chase_TGD;
 
    -- ===================================================================
