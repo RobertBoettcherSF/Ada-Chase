@@ -22,19 +22,19 @@ procedure Tests is
    -- Helper to create an FD with one left attribute
    function Create_FD_1 (Left_Attr, Right_Attr : Character) return Functional_Dependency is
    begin
-      return (Left => (1 => Attribute'Val(Character'Pos(Left_Attr)), others => Nul),
+      return (Left => (1 => Chase.Char_To_Attribute(Left_Attr), others => Nul),
               Left_Length => 1,
-              Right => Attribute'Val(Character'Pos(Right_Attr)));
+              Right => Chase.Char_To_Attribute(Right_Attr));
    end Create_FD_1;
 
    -- Helper to create an FD with two left attributes
    function Create_FD_2 (Left_Attr1, Left_Attr2, Right_Attr : Character) return Functional_Dependency is
    begin
-      return (Left => (1 => Attribute'Val(Character'Pos(Left_Attr1)),
-                       2 => Attribute'Val(Character'Pos(Left_Attr2)),
+      return (Left => (1 => Chase.Char_To_Attribute(Left_Attr1),
+                       2 => Chase.Char_To_Attribute(Left_Attr2),
                        others => Nul),
               Left_Length => 2,
-              Right => Attribute'Val(Character'Pos(Right_Attr)));
+              Right => Chase.Char_To_Attribute(Right_Attr));
    end Create_FD_2;
 
    -- Helper to create a decomposition schema from string of attribute chars
@@ -42,7 +42,7 @@ procedure Tests is
       Schema : Attribute_List := (others => Nul);
    begin
       for I in 1..Attrs'Length loop
-         Schema(I) := Attribute'Val(Character'Pos(Attrs(I)));
+         Schema(I) := Chase.Char_To_Attribute(Attrs(I));
       end loop;
       return Schema;
    end Create_Schema;
