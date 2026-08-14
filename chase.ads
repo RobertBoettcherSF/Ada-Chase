@@ -8,8 +8,8 @@ package Chase is
    -- TYPE DEFINITIONS
    -- ===================================================================
 
-   -- Attribute names are represented as strings
-   type Attribute is new String;
+   -- Attribute names are represented as constrained strings
+   type Attribute is new String(1..10);
 
    -- A value in the tableau can be either a literal (unsubscripted) or a variable (subscripted)
    type Value_Kind is (Literal_Value, Variable_Value);
