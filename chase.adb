@@ -2,7 +2,6 @@
 --  Implementation of the Chase algorithm and its variants
 
 with Ada.Text_IO; use Ada.Text_IO;
-with Ada.Characters.Handling; use Ada.Characters.Handling;
 
 package body Chase is
 
@@ -95,20 +94,20 @@ package body Chase is
       return Find_Attribute_Index(Attributes, Attr_Length, Attr) /= -1;
    end Attribute_In_Schema;
 
-   -- Helper function to convert Character to Attribute (case-insensitive)
+   -- Helper function to convert Character to Attribute
    function Char_To_Attribute (C : Character) return Attribute is
-      Upper_C : Character := To_Upper(C);
    begin
-      if Upper_C = 'A' then return Attribute'Val(1);
-      elsif Upper_C = 'B' then return Attribute'Val(2);
-      elsif Upper_C = 'C' then return Attribute'Val(3);
-      elsif Upper_C = 'D' then return Attribute'Val(4);
-      elsif Upper_C = 'E' then return Attribute'Val(5);
-      elsif Upper_C = 'F' then return Attribute'Val(6);
-      elsif Upper_C = 'G' then return Attribute'Val(7);
-      elsif Upper_C = 'H' then return Attribute'Val(8);
-      else return Nul;
-      end if;
+      case C is
+         when 'A' | 'a' => return Attribute'Val(1);
+         when 'B' | 'b' => return Attribute'Val(2);
+         when 'C' | 'c' => return Attribute'Val(3);
+         when 'D' | 'd' => return Attribute'Val(4);
+         when 'E' | 'e' => return Attribute'Val(5);
+         when 'F' | 'f' => return Attribute'Val(6);
+         when 'G' | 'g' => return Attribute'Val(7);
+         when 'H' | 'h' => return Attribute'Val(8);
+         when others => return Nul;
+      end case;
    end Char_To_Attribute;
 
    -- ===================================================================
