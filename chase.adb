@@ -2,7 +2,6 @@
 --  Implementation of the Chase algorithm and its variants
 
 with Ada.Text_IO; use Ada.Text_IO;
-with Ada.Strings; use Ada.Strings;
 with Ada.Strings.Fixed; use Ada.Strings.Fixed;
 
 package body Chase is
@@ -42,13 +41,13 @@ package body Chase is
    function Values_Equal (Left, Right : Value) return Boolean is
    begin
       if Left.V_Kind = Literal_Value and Right.V_Kind = Literal_Value then
-         return Trim(Left.Text, Ada.Strings.Fixed.Both) = Trim(Right.Text, Ada.Strings.Fixed.Both);
+         return Trim(Left.Text, Ada.Strings.Fixed.Trim_End'Both) = Trim(Right.Text, Ada.Strings.Fixed.Trim_End'Both);
       elsif Left.V_Kind = Literal_Value and Right.V_Kind = Variable_Value then
-         return Trim(Left.Text, Ada.Strings.Fixed.Both) = Trim(Right.Text, Ada.Strings.Fixed.Both);
+         return Trim(Left.Text, Ada.Strings.Fixed.Trim_End'Both) = Trim(Right.Text, Ada.Strings.Fixed.Trim_End'Both);
       elsif Left.V_Kind = Variable_Value and Right.V_Kind = Literal_Value then
-         return Trim(Left.Text, Ada.Strings.Fixed.Both) = Trim(Right.Text, Ada.Strings.Fixed.Both);
+         return Trim(Left.Text, Ada.Strings.Fixed.Trim_End'Both) = Trim(Right.Text, Ada.Strings.Fixed.Trim_End'Both);
       elsif Left.V_Kind = Variable_Value and Right.V_Kind = Variable_Value then
-         return Trim(Left.Text, Ada.Strings.Fixed.Both) = Trim(Right.Text, Ada.Strings.Fixed.Both) and Left.Subscript = Right.Subscript;
+         return Trim(Left.Text, Ada.Strings.Fixed.Trim_End'Both) = Trim(Right.Text, Ada.Strings.Fixed.Trim_End'Both) and Left.Subscript = Right.Subscript;
       end if;
       return False;
    end Values_Equal;
@@ -79,17 +78,16 @@ package body Chase is
    -- Helper function to convert Character to Attribute
    function Char_To_Attribute (C : Character) return Attribute is
    begin
-      case C is
-         when 'A' => return A;
-         when 'B' => return B;
-         when 'C' => return C;
-         when 'D' => return D;
-         when 'E' => return E;
-         when 'F' => return F;
-         when 'G' => return G;
-         when 'H' => return H;
-         when others => return Nul;
-      end case;
+      if C = 'A' then return A;
+      elsif C = 'B' then return B;
+      elsif C = 'C' then return C;
+      elsif C = 'D' then return D;
+      elsif C = 'E' then return E;
+      elsif C = 'F' then return F;
+      elsif C = 'G' then return G;
+      elsif C = 'H' then return H;
+      else return Nul;
+      end if;
    end Char_To_Attribute;
 
    -- ===================================================================
